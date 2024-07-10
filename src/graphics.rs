@@ -369,6 +369,7 @@ pub enum TextureAccess {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TextureKind {
     Texture2D,
+    Texture3D,
     CubeMap,
 }
 
@@ -382,6 +383,7 @@ pub struct TextureParams {
     pub mipmap_filter: MipmapFilterMode,
     pub width: u32,
     pub height: u32,
+    pub depth: u32,
     // All miniquad API could work without this flag being explicit.
     // We can decide if mipmaps are required by the data provided
     // And reallocate non-mipmapped texture(on metal) on generateMipmaps call
@@ -400,6 +402,7 @@ impl Default for TextureParams {
             mipmap_filter: MipmapFilterMode::None,
             width: 0,
             height: 0,
+            depth: 0,
             allocate_mipmaps: false,
         }
     }
@@ -1126,6 +1129,7 @@ pub trait RenderingBackend {
                 kind: TextureKind::Texture2D,
                 width: width as _,
                 height: height as _,
+                depth: 1,
                 format: TextureFormat::RGBA8,
                 wrap: TextureWrap::Clamp,
                 min_filter: FilterMode::Linear,

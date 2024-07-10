@@ -72,6 +72,7 @@ impl From<TextureKind> for GLuint {
     fn from(kind: TextureKind) -> GLuint {
         match kind {
             TextureKind::Texture2D => GL_TEXTURE_2D,
+            TextureKind::Texture3D => GL_TEXTURE_3D,
             TextureKind::CubeMap => GL_TEXTURE_CUBE_MAP,
         }
     }
@@ -188,18 +189,37 @@ impl Texture {
                     );
                 }
                 TextureSource::Bytes(source) => {
-                    assert!(params.kind == TextureKind::Texture2D, "incompatible TextureKind and TextureSource. Cubemaps require TextureSource::Array of 6 textures.");
-                    glTexImage2D(
-                        GL_TEXTURE_2D,
-                        0,
-                        internal_format as i32,
-                        params.width as i32,
-                        params.height as i32,
-                        0,
-                        format,
-                        pixel_type,
-                        source.as_ptr() as *const _,
-                    );
+                    match params.kind {
+                        TextureKind::Texture2D => {
+                            glTexImage2D(
+                                GL_TEXTURE_2D,
+                                0,
+                                internal_format as i32,
+                                params.width as i32,
+                                params.height as i32,
+                                0,
+                                format,
+                                pixel_type,
+                                source.as_ptr() as *const _,
+                            );
+                        },
+                        TextureKind::Texture3D => {
+                            glTexImage3D(
+                                GL_TEXTURE_3D,
+                                0,
+                                internal_format as i32,
+                                params.width as i32,
+                                params.height as i32,
+                                params.depth as i32,
+                                0,
+                                format,
+                                pixel_type,
+                                source.as_ptr() as *const _,
+                            );
+                        },
+                        TextureKind::CubeMap => todo!(),
+                    }
+                    
                 }
                 TextureSource::Array(array) => {
                     if params.kind == TextureKind::CubeMap {
@@ -216,6 +236,7 @@ impl Texture {
                         for (mipmap_level, bytes) in mipmaps.iter().enumerate() {
                             let target = match params.kind {
                                 TextureKind::Texture2D => GL_TEXTURE_2D,
+                                TextureKind::Texture3D => GL_TEXTURE_3D,
                                 TextureKind::CubeMap => {
                                     GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubemap_face as u32
                                 }
