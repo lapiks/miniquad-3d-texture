@@ -144,7 +144,7 @@ impl Texture {
     ) -> Texture {
         if let TextureSource::Bytes(bytes_data) = source {
             assert_eq!(
-                params.format.size(params.width, params.height) as usize,
+                params.format.size(params.width, params.height, params.depth) as usize,
                 bytes_data.len()
             );
         }
@@ -318,9 +318,10 @@ impl Texture {
         y_offset: i32,
         width: i32,
         height: i32,
+        depth: i32,
         source: &[u8],
     ) {
-        assert_eq!(self.size(width as _, height as _), source.len());
+        assert_eq!(self.size(width as _, height as _, depth as _), source.len());
         assert!(x_offset + width <= self.params.width as _);
         assert!(y_offset + height <= self.params.height as _);
 
@@ -394,8 +395,8 @@ impl Texture {
     }
 
     #[inline]
-    fn size(&self, width: u32, height: u32) -> usize {
-        self.params.format.size(width, height) as usize
+    fn size(&self, width: u32, height: u32, depth: u32) -> usize {
+        self.params.format.size(width, height, depth) as usize
     }
 
     fn gl_filter(filter: FilterMode, mipmap_filter: MipmapFilterMode) -> GLenum {
@@ -954,10 +955,11 @@ impl RenderingBackend for GlContext {
         y_offset: i32,
         width: i32,
         height: i32,
+        depth: i32,
         source: &[u8],
     ) {
         let t = self.textures.get(texture);
-        t.update_texture_part(self, x_offset, y_offset, width, height, source);
+        t.update_texture_part(self, x_offset, y_offset, width, height, depth, source);
     }
     fn texture_params(&self, texture: TextureId) -> TextureParams {
         let texture = self.textures.get(texture);

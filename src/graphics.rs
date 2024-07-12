@@ -321,15 +321,15 @@ pub enum TextureFormat {
 }
 impl TextureFormat {
     /// Returns the size in bytes of texture with `dimensions`.
-    pub fn size(self, width: u32, height: u32) -> u32 {
-        let square = width * height;
+    pub fn size(self, width: u32, height: u32, depth: u32) -> u32 {
+        let cube = width * height * depth;
         match self {
-            TextureFormat::RGB8 => 3 * square,
-            TextureFormat::RGBA8 => 4 * square,
-            TextureFormat::RGBA16F => 8 * square,
-            TextureFormat::Depth => 2 * square,
-            TextureFormat::Depth32 => 4 * square,
-            TextureFormat::Alpha => 1 * square,
+            TextureFormat::RGB8 => 3 * cube,
+            TextureFormat::RGBA8 => 4 * cube,
+            TextureFormat::RGBA16F => 8 * cube,
+            TextureFormat::Depth => 2 * cube,
+            TextureFormat::Depth32 => 4 * cube,
+            TextureFormat::Alpha => 1 * cube,
         }
     }
 }
@@ -1140,9 +1140,9 @@ pub trait RenderingBackend {
         )
     }
     fn texture_params(&self, texture: TextureId) -> TextureParams;
-    fn texture_size(&self, texture: TextureId) -> (u32, u32) {
+    fn texture_size(&self, texture: TextureId) -> (u32, u32, u32) {
         let params = self.texture_params(texture);
-        (params.width, params.height)
+        (params.width, params.height, params.depth)
     }
 
     /// Get OpenGL's GLuint texture ID or metals ObjcId
@@ -1151,8 +1151,8 @@ pub trait RenderingBackend {
     /// Update whole texture content
     /// bytes should be width * height * 4 size - non rgba8 textures are not supported yet anyway
     fn texture_update(&mut self, texture: TextureId, bytes: &[u8]) {
-        let (width, height) = self.texture_size(texture);
-        self.texture_update_part(texture, 0 as _, 0 as _, width as _, height as _, bytes)
+        let (width, height, depth) = self.texture_size(texture);
+        self.texture_update_part(texture, 0 as _, 0 as _, width as _, height as _, depth as _, bytes)
     }
     fn texture_set_filter(
         &mut self,
@@ -1186,6 +1186,7 @@ pub trait RenderingBackend {
         y_offset: i32,
         width: i32,
         height: i32,
+        depth: i32,
         bytes: &[u8],
     );
     fn new_render_pass(
