@@ -261,6 +261,7 @@ impl Texture {
                 TextureWrap::Repeat => GL_REPEAT,
                 TextureWrap::Mirror => GL_MIRRORED_REPEAT,
                 TextureWrap::Clamp => GL_CLAMP_TO_EDGE,
+                TextureWrap::ClampToBorder => GL_CLAMP_TO_BORDER,
             };
 
             let min_filter = Self::gl_filter(params.min_filter, params.mipmap_filter);
@@ -874,12 +875,14 @@ impl RenderingBackend for GlContext {
             TextureWrap::Repeat => GL_REPEAT,
             TextureWrap::Mirror => GL_MIRRORED_REPEAT,
             TextureWrap::Clamp => GL_CLAMP_TO_EDGE,
+            TextureWrap::ClampToBorder => GL_CLAMP_TO_BORDER,
         };
 
         let wrap_y = match wrap_y {
             TextureWrap::Repeat => GL_REPEAT,
             TextureWrap::Mirror => GL_MIRRORED_REPEAT,
             TextureWrap::Clamp => GL_CLAMP_TO_EDGE,
+            TextureWrap::ClampToBorder => GL_CLAMP_TO_BORDER,
         };
 
         unsafe {

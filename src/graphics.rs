@@ -343,6 +343,7 @@ pub enum TextureWrap {
     Mirror,
     /// Samples at coord x + 1 map to coord 1.
     Clamp,
+    ClampToBorder,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Hash)]
