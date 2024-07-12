@@ -1171,7 +1171,7 @@ pub trait RenderingBackend {
         mipmap_filter: MipmapFilterMode,
     );
     fn texture_set_mag_filter(&mut self, texture: TextureId, filter: FilterMode);
-    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap);
+    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap, wrap_z: TextureWrap);
     /// Metal-specific note: if texture was created without `params.generate_mipmaps`
     /// `generate_mipmaps` will do nothing.
     ///

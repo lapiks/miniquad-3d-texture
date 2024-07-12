@@ -461,25 +461,35 @@ impl RenderingBackend for MetalContext {
             msg_send_![self.device, newSamplerStateWithDescriptor: texture.sampler_descriptor]
         };
     }
-    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap) {
+    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap, wrap_z: TextureWrap) {
         let texture = self.textures.get_mut(texture);
 
         let wrap_s = match wrap_x {
             TextureWrap::Repeat => MTLSamplerAddressMode::Repeat,
             TextureWrap::Mirror => MTLSamplerAddressMode::MirrorRepeat,
             TextureWrap::Clamp => MTLSamplerAddressMode::ClampToEdge,
+            TextureWrap::ClampToBorder => MTLSamplerAddressMode::ClampToBorder,
         };
 
         let wrap_t = match wrap_y {
             TextureWrap::Repeat => MTLSamplerAddressMode::Repeat,
             TextureWrap::Mirror => MTLSamplerAddressMode::MirrorRepeat,
             TextureWrap::Clamp => MTLSamplerAddressMode::ClampToEdge,
+            TextureWrap::ClampToBorder => MTLSamplerAddressMode::ClampToBorder,
+        };
+
+        let wrap_r = match wrap_r {
+            TextureWrap::Repeat => MTLSamplerAddressMode::Repeat,
+            TextureWrap::Mirror => MTLSamplerAddressMode::MirrorRepeat,
+            TextureWrap::Clamp => MTLSamplerAddressMode::ClampToEdge,
+            TextureWrap::ClampToBorder => MTLSamplerAddressMode::ClampToBorder,
         };
 
         texture.sampler = unsafe {
             //msg_send_![texture.sampler_descriptor, setRAddressMode: wrap];
             msg_send_![texture.sampler_descriptor, setSAddressMode: wrap_s];
             msg_send_![texture.sampler_descriptor, setTAddressMode: wrap_t];
+            msg_send_![texture.sampler_descriptor, setRAddressMode: wrap_r];
             msg_send_![self.device, newSamplerStateWithDescriptor: texture.sampler_descriptor]
         };
     }

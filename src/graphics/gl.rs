@@ -866,7 +866,7 @@ impl RenderingBackend for GlContext {
         self.pipelines.remove(pipeline.0);
     }
 
-    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap) {
+    fn texture_set_wrap(&mut self, texture: TextureId, wrap_x: TextureWrap, wrap_y: TextureWrap, wrap_z: TextureWrap) {
         let t = self.textures.get(texture);
 
         self.cache.store_texture_binding(0);
@@ -885,9 +885,17 @@ impl RenderingBackend for GlContext {
             TextureWrap::ClampToBorder => GL_CLAMP_TO_BORDER,
         };
 
+        let wrap_z = match wrap_z {
+            TextureWrap::Repeat => GL_REPEAT,
+            TextureWrap::Mirror => GL_MIRRORED_REPEAT,
+            TextureWrap::Clamp => GL_CLAMP_TO_EDGE,
+            TextureWrap::ClampToBorder => GL_CLAMP_TO_BORDER,
+        };
+
         unsafe {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_x as i32);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_y as i32);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, wrap_z as i32);
         }
         self.cache.restore_texture_binding(0);
     }
