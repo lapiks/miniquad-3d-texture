@@ -272,6 +272,7 @@ impl Texture {
 
             glTexParameteri(params.kind.into(), GL_TEXTURE_WRAP_S, wrap as i32);
             glTexParameteri(params.kind.into(), GL_TEXTURE_WRAP_T, wrap as i32);
+            glTexParameteri(params.kind.into(), GL_TEXTURE_WRAP_R, wrap as i32);
             glTexParameteri(params.kind.into(), GL_TEXTURE_MIN_FILTER, min_filter as i32);
             glTexParameteri(params.kind.into(), GL_TEXTURE_MAG_FILTER, mag_filter as i32);
         }
